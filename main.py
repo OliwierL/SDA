@@ -60,7 +60,7 @@ def getColor(frame, contour):
 # define a function to detect objects in given image
 def detectObjects(frame):
 
-  #
+  # detect edges on the image
   edges = detectEdges(frame)
 
   # Find contours in the edge-detected image
@@ -112,7 +112,7 @@ def detectObjects(frame):
 
 
 # define a function that converts list[dict] -> list[obj]
-def objectDef(screen, objects):
+def objectDef(screen, objects: list[dict[str, any]]):
 
   newObjects = []
   # iterate through the provided list
@@ -129,7 +129,7 @@ def objectDef(screen, objects):
 
     elif obj['shape'] == "Circle":
       c = circle(screen, obj['bBox']['x'], obj['bBox']['y'],
-                 (obj['bBox']['w'] + obj['bBox']['h']) / 2, obj['color'])
+                 (obj['bBox']['w'] + obj['bBox']['h']) / 4, obj['color'])
       newObjects.append(c)
 
   return newObjects
@@ -140,6 +140,15 @@ def drawObjects(screen, objDict):
   objects = objectDef(screen, objDict)
   for obj in objects:
     obj.draw()
+
+
+# define a function that return a center coordinates of clicked object
+def checkClick(pos, screen, objDict):
+  for obj in objDict:
+    if not obj['shape'] == "Unknown":
+      objO = objectDef(screen, [obj])
+      if objO.clickedInside(pos):
+        return obj
 
 
 def main() -> None:
@@ -159,6 +168,9 @@ def main() -> None:
   # init dobot obj
   dobot = dbt.DoBotArm(sPos['x'], sPos['y'], sPos['z'])
 
+  # connect to dobot
+  dobot.dobotConnect()
+
   # init pygame enviorment
   pygame.init()
 
@@ -174,6 +186,7 @@ def main() -> None:
       #clicked the close button?
       #Quit pygame and end the program
       if event.type == pygame.QUIT:
+        dobot.dobotDisconnect()
         pygame.quit()
         sys.exit()
 
@@ -188,9 +201,17 @@ def main() -> None:
     # draw the objects using pygame
     drawObjects(screen, objects)
 
-    # wait for user to select the object
+    ClickedObj = None
 
-    # move selected object
+    # wait for user to select the object
+    while ClickedObj is None:
+      # check if the user clicked the window
+      for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+          # check if user clicked inside a shape
+          ClickedObj = checkClick(pygame.mouse.get_pos(), screen, objects)
+
+    # move selected object\
 
     pass
 

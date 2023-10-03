@@ -23,5 +23,6 @@ class Circle(Shape):
       if (math.sqrt(
           abs(self.pos[0] - clickPos[0])**2 + abs(self.pos[0] - clickPos[0])**2)
           < self.radious):
-        print("clicked inside the " + self.shapeType)
-        print("the area of this shape is: " + str(self.getArea()))
+        return True
+    else:
+      return False

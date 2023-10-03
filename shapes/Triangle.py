@@ -37,6 +37,6 @@ class Triangle(Shape):
       area2 = self.getArea(self.p3, self.p2, clickPos)
       area3 = self.getArea(self.p3, self.p1, clickPos)
       if tArea == (area1 + area2 + area3):
-        print("clicked inside the " + self.shapeType)
-        print("the area of this shape is: " +
-              str(self.getArea(self.p1, self.p2, self.p3)))
+        return True
+    else:
+      return False

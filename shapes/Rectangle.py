@@ -17,5 +17,6 @@ class Rectangle(Shape):
 
   def clickedInside(self, clickPos):
     if super().clickedInside(clickPos):
-      print("clicked inside the " + self.shapeType)
-      print("the area of this shape is: " + str(self.getArea()))
+      return True
+    else:
+      return False
