@@ -168,9 +168,6 @@ def main() -> None:
   # init dobot obj
   dobot = dbt.DoBotArm(sPos['x'], sPos['y'], sPos['z'])
 
-  # connect to dobot
-  dobot.dobotConnect()
-
   # init pygame enviorment
   pygame.init()
 
@@ -211,9 +208,7 @@ def main() -> None:
           # check if user clicked inside a shape
           ClickedObj = checkClick(pygame.mouse.get_pos(), screen, objects)
 
-    # move selected object\
-
-    pass
+    # move the oject using dobot
 
 
 # run the main function
