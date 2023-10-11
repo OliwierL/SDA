@@ -5,11 +5,13 @@ import cv2 as cv
 import numpy as np
 from pygame.locals import *
 import dobotLib.DoBotArm as dbt
-from serial.tools import list_ports
-import shapes.Shape as shape
-import shapes.Circle as circle
-import shapes.Rectangle as rect
-import shapes.Triangle as triangle
+from serial.tools import list_ports as lp
+from shapes.Circle import Circle as circle
+from shapes.Rectangle import Rectangle as rect
+from shapes.Triangle import Triangle as triangle
+
+from icecream import ic
+import json
 
 # define starting pos
 sPos = {'x': 0, 'y': 0, 'z': 0}
@@ -75,13 +77,16 @@ def detectObjects(frame):
     epsilon = 0.04 * cv.arcLength(contour, True)
     vertices = cv.approxPolyDP(contour, epsilon, True)
 
+    x, y, w, h = cv.boundingRect(contour)
+    cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
     # Calculate the center point of the contour
     cPoint = (0, 0)
     M = cv.moments(contour)
     if M["m00"] != 0:
       cX = int(M["m10"] / M["m00"])
       cY = int(M["m01"] / M["m00"])
-      cPoint(cX, cY)
+      cPoint = (cX, cY)
     else:
       cPoint = (0, 0)
 
@@ -105,26 +110,30 @@ def detectObjects(frame):
             'h': h
         }
     }
-
     objects.append(obj)
 
   return objects
 
 
 # define a function that converts list[dict] -> list[obj]
-def objectDef(screen, objects: list[dict[str, any]]):
+def objectDef(screen, objects: list[dict[str, any]]) -> list[any]:
 
   newObjects = []
   # iterate through the provided list
   for obj in objects:
     if obj['shape'] == "Triangle":
-      t = triangle(screen, obj['bBox']['x'], obj['bBox']['y'], obj['bBox']['w'],
-                   obj['bBox']['h'], obj['color'])
+      epsilon = 0.04 * cv.arcLength(obj['contour'], True)
+      vertices = cv.approxPolyDP(obj['contour'], epsilon, True)
+      t = triangle(screen, vertices, obj['bBox']['x'], obj['bBox']['y'],
+                   obj['bBox']['w'], obj['bBox']['h'], obj['color'])
+
       newObjects.append(t)
 
     elif obj['shape'] == "Rectangle":
-      r = rect(screen, obj['bBox']['x'], obj['bBox']['y'], obj['bBox']['w'],
-               obj['bBox']['h'], obj['color'])
+      epsilon = 0.04 * cv.arcLength(obj['contour'], True)
+      vertices = cv.approxPolyDP(obj['contour'], epsilon, True)
+      r = rect(screen, vertices, obj['bBox']['x'], obj['bBox']['y'],
+               obj['bBox']['w'], obj['bBox']['h'], obj['color'])
       newObjects.append(r)
 
     elif obj['shape'] == "Circle":
@@ -137,9 +146,10 @@ def objectDef(screen, objects: list[dict[str, any]]):
 
 # define a function to draw the objects using pygame
 def drawObjects(screen, objDict):
-  objects = objectDef(screen, objDict)
-  for obj in objects:
-    obj.draw()
+  for obj in objDict:
+    if not obj['shape'] == "Unknown":
+      objO = objectDef(screen, [obj])
+      objO[0].draw()
 
 
 # define a function that return a center coordinates of clicked object
@@ -147,7 +157,8 @@ def checkClick(pos, screen, objDict):
   for obj in objDict:
     if not obj['shape'] == "Unknown":
       objO = objectDef(screen, [obj])
-      if objO.clickedInside(pos):
+      if objO[0].clickedInside(pos):
+        print("clicked inside the" + str(objO) + " object")
         return obj
 
 
@@ -159,14 +170,21 @@ def main() -> None:
   # init camera
   # 0 represents the default camera (you can change it if you have multiple cameras)
   cap = cv.VideoCapture(0)
+  frame_width = 1920 / 2
+  frame_height = 1080 / 2
+  cap.set(cv.CAP_PROP_FRAME_WIDTH, frame_width)
+  cap.set(cv.CAP_PROP_FRAME_HEIGHT, frame_height)
 
   # get first camera frame
   ret, frame = cap.read()
   if not ret:
     return None  # Exit if there's an issue with the camera feed
 
+  # camera preview
+  # cv.imshow("Camera Preview", frame)
+
   # init dobot obj
-  dobot = dbt.DoBotArm(sPos['x'], sPos['y'], sPos['z'])
+  # dobot = dbt.DoBotArm(sPos['x'], sPos['y'], sPos['z'])
 
   # init pygame enviorment
   pygame.init()
@@ -174,6 +192,8 @@ def main() -> None:
   # create pygame window
   imgHeight, imgWidth, _ = frame.shape
   screen = pygame.display.set_mode((imgWidth, imgHeight))
+  print(imgWidth)
+  print(imgHeight)
 
   # loop forever:
   while True:
@@ -183,9 +203,8 @@ def main() -> None:
       #clicked the close button?
       #Quit pygame and end the program
       if event.type == pygame.QUIT:
-        dobot.dobotDisconnect()
-        pygame.quit()
-        sys.exit()
+        cap.release()
+        return -1
 
     # refresh the camera
     ret, frame = cap.read()
@@ -195,22 +214,37 @@ def main() -> None:
     # detect objects on the image
     objects = detectObjects(frame)
 
+    #clear the screen
+    screen.fill((255, 255, 255))
     # draw the objects using pygame
     drawObjects(screen, objects)
+    # Update the display
+    pygame.display.update()
 
     ClickedObj = None
-
     # wait for user to select the object
     while ClickedObj is None:
+      #check if the user closed the window
+      for event in pygame.event.get():
+        #clicked the close button?
+        #Quit pygame and end the program
+        if event.type == pygame.QUIT:
+          cap.release()
+          return -1
       # check if the user clicked the window
       for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
           # check if user clicked inside a shape
           ClickedObj = checkClick(pygame.mouse.get_pos(), screen, objects)
 
-    # move the oject using dobot
 
+# move the oject using dobot
 
 # run the main function
 if __name__ == "__main__":
   main()
+  print("program stop")
+  # dobot.dobotDisconnect()
+  pygame.quit()
+  cv.destroyAllWindows()
+  sys.exit()

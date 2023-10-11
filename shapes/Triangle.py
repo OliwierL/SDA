@@ -4,12 +4,12 @@ from shapes.Shape import Shape
 
 class Triangle(Shape):
 
-  def __init__(self, window, x, y, a, b, color):
+  def __init__(self, window, vert, x, y, a, b, color):
     self.pos = (x, y)
     self.dim = (a, b)
-    self.p1 = self.pos
-    self.p2 = (self.pos[0] + self.dim[0], self.pos[1])
-    self.p3 = (self.pos[0], self.pos[1] + self.dim[1])
+    self.p1 = vert[0][0]
+    self.p2 = vert[1][0]
+    self.p3 = vert[2][0]
 
     super().__init__(window, color, pygame.Rect(x, y, a, b), "Triangle")
 
