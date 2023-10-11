@@ -78,7 +78,7 @@ def detectObjects(frame):
     vertices = cv.approxPolyDP(contour, epsilon, True)
 
     x, y, w, h = cv.boundingRect(contour)
-    cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    cv.rectangle(frame, (x, y), (x + w, y + h), (20, 20, 20), 2)
 
     # Calculate the center point of the contour
     cPoint = (0, 0)
@@ -214,8 +214,16 @@ def main() -> None:
     # detect objects on the image
     objects = detectObjects(frame)
 
-    #clear the screen
-    screen.fill((255, 255, 255))
+    # Convert OpenCV BGR image to RGB
+    rgb_frame = cv.cvtColor(
+        cv.rotate(frame, cv.ROTATE_90_CLOCKWISE), cv.COLOR_BGR2RGB)
+
+    # Convert the frame to a Pygame surface
+    pygame_frame = pygame.surfarray.make_surface(cv.flip(rgb_frame, 1))
+
+    # Blit the frame onto the Pygame window
+    screen.blit(pygame_frame, (0, 0))
+
     # draw the objects using pygame
     drawObjects(screen, objects)
     # Update the display
@@ -223,6 +231,7 @@ def main() -> None:
 
     ClickedObj = None
     # wait for user to select the object
+    print("window refreshed")
     while ClickedObj is None:
       #check if the user closed the window
       for event in pygame.event.get():
@@ -236,6 +245,7 @@ def main() -> None:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
           # check if user clicked inside a shape
           ClickedObj = checkClick(pygame.mouse.get_pos(), screen, objects)
+          break
 
 
 # move the oject using dobot

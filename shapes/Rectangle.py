@@ -22,6 +22,22 @@ class Rectangle(Shape):
 
   def clickedInside(self, clickPos):
     if super().clickedInside(clickPos):
-      return True
+      vert = [self.p1, self.p2, self.p3, self.p4]
+      n = len(vert)
+      j = n - 1
+      inside = False
+
+      for i in range(n):
+        xi, yi = vert[i]
+        xj, yj = vert[j]
+
+        if (yi < clickPos[1] and yj >= clickPos[1]) or (yj < clickPos[1] and
+                                                        yi >= clickPos[1]):
+          if xi + (clickPos[1] - yi) / (yj - yi) * (xj - xi) < clickPos[0]:
+            inside = not inside
+        j = i
+
+      return inside
+
     else:
       return False
