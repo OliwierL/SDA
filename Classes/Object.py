@@ -22,6 +22,9 @@ class Object:
       vert.append(vertices[i][0])
     self.vert = vert
 
+  def __repr__(self) -> str:
+    return f"object: {self.shape} at: {self.bBox['x']}, {self.bBox['y']}"
+
   def notGray(self) -> bool:
     ac = 20
     if abs(self.color[0] - self.color[1]) < ac and abs(

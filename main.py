@@ -60,9 +60,7 @@ def main():
           selectedObj = ui.checkClick(objs)
 
     # do movement here
-    print(
-        f"clicked object: {selectedObj.shape} at: {selectedObj.bBox['x']}, {selectedObj.bBox['y']}"
-    )
+    print(f"clicked {selectedObj}")
 
 
 # run the main function
