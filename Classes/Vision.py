@@ -1,5 +1,5 @@
 import cv2 as cv
-from functions.ObjD import *
+from functions.ObjD import detectObjects as detObj
 from Classes.Object import Object as Obj
 
 
@@ -18,7 +18,7 @@ class Vision:
     _, self.frame = self.cam.read()
 
   def GetObjects(self) -> list[Obj]:
-    objSpecs = detectObjects(self.frame)
+    objSpecs = detObj(self.frame)
     objects = []
     for obD in objSpecs:
       if not obD['shape'] == "Unknown":
