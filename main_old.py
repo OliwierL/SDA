@@ -223,7 +223,7 @@ def main() -> None:
       break  # Exit if there's an issue with the camera feed
 
     #save the camera read
-    cv.imwrite('output_image.jpg', frame)
+    #cv.imwrite('output_image.jpg', frame)
 
     # set detection area
     # cv.imshow("Camera Preview", frame)
