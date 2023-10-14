@@ -4,6 +4,8 @@ import cv2 as cv
 import pygame
 from sympy import false, true
 
+from icecream import ic
+
 
 class Object:
 

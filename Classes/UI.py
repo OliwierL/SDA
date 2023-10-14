@@ -2,8 +2,6 @@ import pygame
 import cv2 as cv
 from Classes.Object import Object as Obj
 
-from icecream import ic
-
 
 class UI:
 
@@ -19,21 +17,20 @@ class UI:
 
   def drawObj(self, obj: Obj) -> None:
     if obj.shape == "Circle":
-      pos = (obj.bBox['x'], obj.bBox['y'])
       radious = (obj.bBox['w'] + obj.bBox['h']) / 4
-      pygame.draw.circle(self.window, (0, 0, 0), pos, radious)
+      pos = (obj.bBox['x'] + radious, obj.bBox['y'] + radious)
+      pygame.draw.circle(self.display, obj.color, pos, radious)
     elif obj.shape == "Rectangle" or obj.shape == "Triangle":
-      pygame.draw.polygon(self.display, (0, 0, 0), obj.vert)
+      pygame.draw.polygon(self.display, obj.color, obj.vert)
     else:
       pass
+    pygame.display.update()
 
   def checkClick(self, objs: list[Obj]) -> Obj:
     clickPos = pygame.mouse.get_pos()
     for obj in objs:
       if obj.collidesWith(clickPos):
-        return Obj
-      else:
-        return None
+        return obj
 
   def clear(self) -> None:
     self.display.blit(self.background, (0, 0))

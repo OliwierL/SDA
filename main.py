@@ -7,6 +7,8 @@ from Classes.UI import UI
 from Classes.Vision import Vision
 from Classes.Movement import Movement
 
+from icecream import ic
+
 
 def main():
 
@@ -59,7 +61,7 @@ def main():
 
     # do movement here
     print(
-        f"clicked object: {selectedObj} at: {selectedObj.bBox['x']}, {selectedObj.bBox['y']}"
+        f"clicked object: {selectedObj.shape} at: {selectedObj.bBox['x']}, {selectedObj.bBox['y']}"
     )
 
 
