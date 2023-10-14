@@ -13,7 +13,7 @@ def main():
   # define constants:
   __iwidth__ = 1920 / 2
   __iHeight__ = 1080 / 2
-  __camID__ = 1
+  __camID__ = 0
 
   # Initialize objects
   vi = Vision(cv.VideoCapture(__camID__), (__iwidth__, __iHeight__))
@@ -36,20 +36,15 @@ def main():
     # get objects
     objs = vi.GetObjects()
 
-    # drop grey objects
-    objects = []
-    for obj in objs:
-      if obj.notGray():
-        objects.append(obj)
-
     # update the image in pygame and draw the objects
     ui.updateBg(vi.frame)
-    ui.drawObj(objects)
+    for obj in objs:
+      ui.drawObj(obj)
 
-    selectObj = None
+    selectedObj = None
 
     # wait for user to select the shape
-    while selectObj is None:
+    while selectedObj is None:
       # check if the user closed the window
       for event in pygame.event.get():
         #Quit pygame and end the program
@@ -60,7 +55,12 @@ def main():
       # check if the user clicked the window
       for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-          clickedObj = ui.checkClick(objects)
+          selectedObj = ui.checkClick(objs)
+
+    # do movement here
+    print(
+        f"clicked object: {selectedObj} at: {selectedObj.bBox['x']}, {selectedObj.bBox['y']}"
+    )
 
 
 # run the main function

@@ -65,7 +65,7 @@ def detectObjects(frame):
     x, y, w, h = cv.boundingRect(contour)
 
     # draw bounding boxes
-    # cv.rectangle(frame, (x, y), (x + w, y + h), (20, 20, 20), 2)
+    cv.rectangle(frame, (x, y), (x + w, y + h), (20, 20, 20), 2)
 
     # Calculate the center point of the contour
     cPoint = (0, 0)

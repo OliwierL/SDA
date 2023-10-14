@@ -1,7 +1,8 @@
 import pygame
 import cv2 as cv
-from math import sqrt, pi
 from Classes.Object import Object as Obj
+
+from icecream import ic
 
 
 class UI:
@@ -16,17 +17,19 @@ class UI:
         cv.rotate(img, cv.ROTATE_90_CLOCKWISE), cv.COLOR_BGR2RGB)
     self.background = pygame.surfarray.make_surface(cv.flip(rgb_frame, 1))
 
-  def drawObj(self, object: Obj) -> None:
-    if object.shape == "Circle":
-      pos = (object.bBox['x'], object.bBox['y'])
-      radious = (object.bBox['w'] + object.bBox['h']) / 4
-      pygame.draw.circle(self.window, object.color, pos, radious)
-    elif object.shape == "Rectangle" or object.shape == "Triangle":
-      pygame.draw.polygon(self.display, object.color, object.vert)
+  def drawObj(self, obj: Obj) -> None:
+    if obj.shape == "Circle":
+      pos = (obj.bBox['x'], obj.bBox['y'])
+      radious = (obj.bBox['w'] + obj.bBox['h']) / 4
+      pygame.draw.circle(self.window, (0, 0, 0), pos, radious)
+    elif obj.shape == "Rectangle" or obj.shape == "Triangle":
+      pygame.draw.polygon(self.display, (0, 0, 0), obj.vert)
+    else:
+      pass
 
-  def checkClick(self, objects: list[Obj]) -> Obj:
+  def checkClick(self, objs: list[Obj]) -> Obj:
     clickPos = pygame.mouse.get_pos()
-    for obj in objects:
+    for obj in objs:
       if obj.collidesWith(clickPos):
         return Obj
       else:
