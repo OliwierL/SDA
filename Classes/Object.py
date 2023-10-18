@@ -1,5 +1,6 @@
-from ast import Tuple
+from ast import Dict, Tuple
 from math import sqrt
+from typing import Any
 import cv2 as cv
 import pygame
 
@@ -8,7 +9,7 @@ from icecream import ic
 
 class Object:
 
-  def __init__(self, ObjSpec) -> None:
+  def __init__(self, ObjSpec: Dict[str, Any]) -> None:
     self.contour = ObjSpec['contour']
     self.center = ObjSpec['center']
     self.shape = ObjSpec['shape']

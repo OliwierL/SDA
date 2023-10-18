@@ -26,7 +26,7 @@ class Movement:
   def __moveTo__(self, pos: tuple) -> None:
     self.dobot.moveArmXY(pos[0], pos[1])
 
-  def __pickAt__(self, height, suction) -> None:
+  def __pickAt__(self, height: int, suction: bool) -> None:
     self.dobot.pickToggle(height)
     self.dobot.suction(suction)
     self.dobot.pickToggle(height)
