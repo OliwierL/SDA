@@ -1,10 +1,8 @@
-from ast import Dict, Tuple
+from ast import Dict
 from math import sqrt
 from typing import Any
 import cv2 as cv
 import pygame
-
-from icecream import ic
 
 
 class Object:

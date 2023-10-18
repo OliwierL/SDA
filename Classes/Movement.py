@@ -1,5 +1,4 @@
 from typing import Any
-
 from networkx import triad_type
 from Classes.Object import Object as Obj
 from dobotLib.DoBotArm import DoBotArm as Dbt

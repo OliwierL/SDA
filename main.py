@@ -7,8 +7,6 @@ from Classes.UI import UI
 from Classes.Vision import Vision
 from Classes.Movement import Movement
 
-from icecream import ic
-
 
 def main():
 
