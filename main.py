@@ -38,6 +38,8 @@ def main():
 
     # refresh the camera
     vi.refresh()
+    imgHeight, imgWidth, _ = vi.frame.shape
+    res = (imgWidth, imgHeight)
 
     # get objects
     objs = vi.GetObjects()
@@ -66,7 +68,7 @@ def main():
     # do movement here
     print(f"clicked {selectedObj}")
 
-    mv.moveObj(selectedObj)
+    mv.moveObj(selectedObj, res)
 
 
 # run the main function
