@@ -15,15 +15,16 @@ class UI:
         cv.rotate(img, cv.ROTATE_90_CLOCKWISE), cv.COLOR_BGR2RGB)
     self.background = pygame.surfarray.make_surface(cv.flip(rgb_frame, 1))
 
-  def drawObj(self, obj: Obj) -> None:
-    if obj.shape == "Circle":
-      radious = (obj.bBox['w'] + obj.bBox['h']) / 4
-      pos = (obj.bBox['x'] + radious, obj.bBox['y'] + radious)
-      pygame.draw.circle(self.display, obj.color, pos, radious)
-    elif obj.shape == "Rectangle" or obj.shape == "Triangle":
-      pygame.draw.polygon(self.display, obj.color, obj.vert)
-    else:
-      pass
+  def drawObjs(self, objs: list[Obj]) -> None:
+    for obj in objs:
+      if obj.shape == "Circle":
+        radious = (obj.bBox['w'] + obj.bBox['h']) / 4
+        pos = (obj.bBox['x'] + radious, obj.bBox['y'] + radious)
+        pygame.draw.circle(self.display, obj.color, pos, radious)
+      elif obj.shape == "Rectangle" or obj.shape == "Triangle":
+        pygame.draw.polygon(self.display, obj.color, obj.vert)
+      else:
+        pass
     pygame.display.update()
 
   def checkClick(self, objs: list[Obj]) -> Obj:

@@ -17,10 +17,13 @@ def main():
   __iHeight__ = 1080 / 2
   __camID__ = 0
 
+  __homePos__ = (250, 0, 50)
+  __dropPos__ = (250, 100, 50)
+
   # Initialize objects
   vi = Vision(cv.VideoCapture(__camID__), (__iwidth__, __iHeight__))
   ui = UI(__iwidth__, __iHeight__, vi.frame)
-  mv = Movement()
+  mv = Movement(__homePos__, __dropPos__)
 
   # loop forever
   while True:
@@ -30,6 +33,7 @@ def main():
       #Quit pygame and end the program
       if event.type == pygame.QUIT:
         vi.cam.release()
+        mv.dobot.dobotDisconnect()
         return -1
 
     # refresh the camera
@@ -40,8 +44,7 @@ def main():
 
     # update the image in pygame and draw the objects
     ui.updateBg(vi.frame)
-    for obj in objs:
-      ui.drawObj(obj)
+    ui.drawObjs(objs)
 
     selectedObj = None
 
@@ -52,6 +55,7 @@ def main():
         #Quit pygame and end the program
         if event.type == pygame.QUIT:
           vi.cam.release()
+          mv.dobot.dobotDisconnect()
           return -1
 
       # check if the user clicked the window
@@ -62,12 +66,13 @@ def main():
     # do movement here
     print(f"clicked {selectedObj}")
 
+    mv.moveObj(selectedObj)
+
 
 # run the main function
 if __name__ == "__main__":
   main()
   print("program stop")
-  # dobot.dobotDisconnect()
   pygame.quit()
   cv.destroyAllWindows()
   sys.exit()

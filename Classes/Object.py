@@ -2,7 +2,6 @@ from ast import Tuple
 from math import sqrt
 import cv2 as cv
 import pygame
-from sympy import false, true
 
 from icecream import ic
 
@@ -14,7 +13,7 @@ class Object:
     self.center = ObjSpec['center']
     self.shape = ObjSpec['shape']
     self.color = ObjSpec['color']
-    self.bBox = ObjSpec['bBox']
+    self.bBox = ObjSpec['bBox']  # bounding box
     epsilon = 0.04 * cv.arcLength(ObjSpec['contour'], True)
     vertices = cv.approxPolyDP(ObjSpec['contour'], epsilon, True)
     vert = []
