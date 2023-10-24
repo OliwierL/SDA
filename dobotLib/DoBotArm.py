@@ -122,7 +122,7 @@ class DoBotArm:
     return dType.GetPose(self.api)
 
   def moveArmRelXY(self, xrel, yrel, wait=True, jump=False):
-    position = self.getPosition()
+    positions = self.getPosition()
     return self.moveArmXY(positions[0] + xrel, positions[1] + yrel, wait, jump)
 
   #Moves arm to X/Y/Z Location

@@ -2,6 +2,7 @@
 import pygame
 import cv2 as cv
 import sys
+import time
 from serial.tools import list_ports
 
 from Classes.UI import UI
@@ -16,11 +17,7 @@ def main():
   __iHeight__ = 1080 / 2
   __camID__ = 0
 
-  __homePos__ = (250, 0, 50)
-  __dropPos__ = (250, 100, 50)
-
   available_ports = list_ports.comports()
-  print('Available COM-ports:')
   for i, port in enumerate(available_ports):
     print(f"  {i}: {port.description}")
 
@@ -29,8 +26,9 @@ def main():
 
   # Initialize objects
   vi = Vision(cv.VideoCapture(__camID__), (__iwidth__, __iHeight__))
+  mv = Movement(__port__)
+  mv.setBCord(vi.frame)
   ui = UI(__iwidth__, __iHeight__, vi.frame)
-  mv = Movement(__port__, __homePos__, __dropPos__)
 
   # loop forever
   while True:
@@ -45,8 +43,6 @@ def main():
 
     # refresh the camera
     vi.refresh()
-    imgHeight, imgWidth, _ = vi.frame.shape
-    res = (imgWidth, imgHeight)
 
     # get objects
     objs = vi.GetObjects()
@@ -56,6 +52,8 @@ def main():
     ui.drawObjs(objs)
 
     selectedObj = None
+
+    timeSnip = time.time()
 
     # wait for user to select the shape
     while selectedObj is None:
@@ -72,10 +70,13 @@ def main():
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
           selectedObj = ui.checkClick(objs)
 
+      if time.time() - timeSnip > 15:  # in secconds
+        break
+
     # do movement here
     print(f"clicked {selectedObj}")
 
-    mv.moveObj(selectedObj, res)
+    mv.moveObj(selectedObj)
 
 
 # run the main function

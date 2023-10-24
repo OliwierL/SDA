@@ -1,20 +1,16 @@
 from typing import Any
+import cv2 as cv
 from Classes.Object import Object as Obj
 from dobotLib.DoBotArm import DoBotArm as Dbt
+from functions.cdet import getField
 
 
 class Movement:
 
-  def __init__(self, port: int, home: tuple, dropPos: tuple) -> None:
+  def __init__(self, port: int, home=None) -> None:
+    if home is None:
+      home = (250, 0, 50)
     self.dobot = Dbt(port, home[0], home[1], home[2])
-    self.dropPos = dropPos
-
-    # this requires testing to set to proper values
-    # dobot coordinates for Top Left Corner of the image
-    self.TL = (0, 0)
-    # dobot coordinates for Bottom Right Corner of the image
-    self.BR = (200, 120)
-
     self.dobot.dobotConnect()
     self.__goHome__()
 
@@ -29,18 +25,35 @@ class Movement:
     self.dobot.suction(suction)
     self.dobot.pickToggle(height)
 
-  def moveObj(self, obj: Obj, res: tuple, TL=None, BR=None) -> None:
-    if type(TL) == None or type(BR) == None:
-      TL = self.TL
-      BR = self.BR
+  def setBCord(self, frame: cv.Mat) -> None:
+    field = getField(frame)
+    if type(field) is not Obj:
+      print("an Error occured, unable to locate the field")
+      while True:
+        pass
+    self.field = field
+    input("Place dobot in top left corner of the field and press [ENTER]")
+    self.TL = self.dobot.getPosition()
+    input("Place dobot in bottom right corner of the field and press [ENTER]")
+    self.BR = self.dobot.getPosition()
 
-    # Distance From Origin (0,0) or (TL)
-    # where 0 is origin and 1 is max value
-    DFO_X = obj.center[0] / res[0]
-    DFO_Y = obj.center[1] / res[1]
+  def moveObj(self, obj: Obj) -> None:
 
-    posX = TL[0] - (TL[0] - BR[0]) * DFO_X
-    posY = TL[1] - (TL[1] - BR[1]) * DFO_Y
+    if not self.field.collidesWith(obj.center):
+      print("Err: selected object is outside of the pickup field")
+      return None
+
+    dXdobot = self.TL[0] - self.BR[0]
+    dYdobot = self.TL[1] - self.BR[1]
+
+    objNormPosX = (obj.center[0] - self.field.bBox['x']) / (
+        self.field.bBox['x'] + self.field.bBox['w'])
+
+    objNormPosY = (obj.center[1] - self.field.bBox['y']) / (
+        self.field.bBox['y'] + self.field.bBox['y'])
+
+    posX = self.TL[0] + dXdobot * objNormPosX
+    posY = self.TL[1] + dYdobot * objNormPosY
 
     objectPos = (int(posX), int(posY))  # temp
 
@@ -58,4 +71,3 @@ class Movement:
 
     # go home
     self.dobot.moveHome()
-    pass

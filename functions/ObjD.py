@@ -45,7 +45,7 @@ def getColor(frame, contour):
 
 
 # define a function to detect objects in given image
-def detectObjects(frame):
+def detectObjects(frame) -> list[dict]:
 
   # detect edges on the image
   edges = detectEdges(frame)
