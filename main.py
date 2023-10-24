@@ -2,6 +2,7 @@
 import pygame
 import cv2 as cv
 import sys
+from serial.tools import list_ports
 
 from Classes.UI import UI
 from Classes.Vision import Vision
@@ -18,10 +19,18 @@ def main():
   __homePos__ = (250, 0, 50)
   __dropPos__ = (250, 100, 50)
 
+  available_ports = list_ports.comports()
+  print('Available COM-ports:')
+  for i, port in enumerate(available_ports):
+    print(f"  {i}: {port.description}")
+
+  choice = int(input('Choose port by typing a number followed by [Enter]: '))
+  __port__ = available_ports[choice].device
+
   # Initialize objects
   vi = Vision(cv.VideoCapture(__camID__), (__iwidth__, __iHeight__))
   ui = UI(__iwidth__, __iHeight__, vi.frame)
-  mv = Movement(__homePos__, __dropPos__)
+  mv = Movement(__port__, __homePos__, __dropPos__)
 
   # loop forever
   while True:

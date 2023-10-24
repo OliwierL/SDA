@@ -5,8 +5,8 @@ from dobotLib.DoBotArm import DoBotArm as Dbt
 
 class Movement:
 
-  def __init__(self, home: tuple, dropPos: tuple) -> None:
-    self.dobot = Dbt(home[0], home[1], home[2])
+  def __init__(self, port: int, home: tuple, dropPos: tuple) -> None:
+    self.dobot = Dbt(port, home[0], home[1], home[2])
     self.dropPos = dropPos
 
     # this requires testing to set to proper values
