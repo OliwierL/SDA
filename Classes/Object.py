@@ -7,7 +7,7 @@ import pygame
 
 class Object:
 
-  def __init__(self, ObjSpec: Dict[str, Any]) -> None:
+  def __init__(self, ObjSpec: Dict) -> None:
     self.contour = ObjSpec['contour']
     self.center = ObjSpec['center']
     self.shape = ObjSpec['shape']
