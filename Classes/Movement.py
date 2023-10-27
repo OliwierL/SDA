@@ -1,7 +1,7 @@
 from typing import Any
 import cv2 as cv
 from Classes.Object import Object as Obj
-from dobotLib.DoBotArm import DoBotArm as Dbt
+import DoBotArm as Dbt
 from functions.cdet import getField
 
 
@@ -10,7 +10,7 @@ class Movement:
   def __init__(self, port: int, home=None) -> None:
     if home is None:
       home = (250, 0, 50)
-    self.dobot = Dbt(port, home[0], home[1], home[2])
+    self.dobot = Dbt.DoBotArm(port, home[0], home[1], home[2])
     self.dobot.dobotConnect()
     self.__goHome__()
 
